@@ -1,0 +1,60 @@
+allprojects {
+    apply plugin: "java"
+
+    apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
+    apply plugin: 'pmd'
+
+    repositories {
+        mavenLocal()
+//        mavenCentral()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    }
+
+    ext {
+        encoding = 'UTF-8'
+        checkstyleVersion = '7.2'
+        findbugsVersion = '3.0.0'
+        pmdVersion = '5.5.1'
+    }
+
+    compileJava.options.encoding = encoding
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    checkstyle {
+        toolVersion = checkstyleVersion
+        config = rootProject.resources.text.fromFile('quality/checkstyle.xml')
+        showViolations = true
+    }
+
+    findbugs {
+        toolVersion = findbugsVersion
+        reportLevel = "low"
+        effort = "max"
+        excludeFilter = rootProject.file('quality/findbugs-exclude-filter.xml')
+    }
+
+    pmd {
+        toolVersion = pmdVersion
+        ruleSetConfig = rootProject.resources.text.fromFile('quality/pmd.xml')
+        consoleOutput = true
+    }
+}
+
+project(":netty-assemble") {
+    dependencies {
+        compile "io.netty:netty-all:4.1.8.Final"
+//        compile "org.springframework:spring-core:4.3.0.RELEASE"
+//        compile "org.springframework:spring-context:4.3.0.RELEASE"
+//        compile "org.springframework:spring-webmvc:4.3.0.RELEASE"
+    }
+}
+
+project(":core") {
+    dependencies {
+        compile "redis.clients:jedis:2.9.0"
+        compile 'com.fasterxml.jackson.core:jackson-databind:2.5.4'
+    }
+}
+
