@@ -39,6 +39,7 @@ public class Server {
 
                             ch.pipeline().addLast(new HttpRequestDecoder());
                             ch.pipeline().addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
+                            ch.pipeline().addLast(new InboundHandler());
                             ch.pipeline().addLast(new InboundServerHandler());
                         }
                     })

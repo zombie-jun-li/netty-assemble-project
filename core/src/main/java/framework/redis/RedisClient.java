@@ -26,4 +26,12 @@ public class RedisClient {
     public String set(String key, String value) {
         return execute(jedis -> jedis.set(key, value));
     }
+
+    public String getSet(String key, String value) {
+        return execute(jedis -> jedis.getSet(key, value));
+    }
+
+    public Long del(String key) {
+        return execute(jedis -> jedis.del(key));
+    }
 }
