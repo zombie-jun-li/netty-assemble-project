@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -82,25 +82,22 @@ public class DefaultBeanFactory implements Factory {
     }
 
     private void inject(Object object) {
-        Field[] fields = object.getClass().getDeclaredFields();
-        try {
-            for (Field field : fields) {
-                if (!field.isAnnotationPresent(Inject.class)) {
-                    continue;
-                }
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-                Class<?> beanClass = field.getType();
-                String beanName = field.getName();
-                Object bean = getBean(beanName, field.getType());
-                Assert.notNull(bean, String.format("bean=%s not registered.", new BeanDefinition.BeanDefinitionBuilder()
-                        .setBeanName(beanName).setBeanClass(beanClass).build()));
-                field.set(object, bean);
-            }
-        } catch (IllegalAccessException e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
-
+        Arrays.stream(object.getClass().getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Inject.class))
+                .forEach(field -> {
+                    try {
+                        Class<?> beanClass = field.getType();
+                        String beanName = field.getName();
+                        Object bean = getBean(beanName, field.getType());
+                        Assert.notNull(bean, String.format("bean=%s not registered.", new BeanDefinition.BeanDefinitionBuilder()
+                                .setBeanName(beanName).setBeanClass(beanClass).build()));
+                        if (!field.isAccessible()) {
+                            field.setAccessible(true);
+                        }
+                        field.set(object, bean);
+                    } catch (IllegalAccessException e) {
+                        throw new BeanCreationException(e.getMessage(), e);
+                    }
+                });
     }
 }

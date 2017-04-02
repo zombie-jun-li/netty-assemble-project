@@ -45,10 +45,6 @@ allprojects {
 project(":netty-assemble") {
     dependencies {
         compile project(":core")
-        compile "io.netty:netty-all:4.1.8.Final"
-//        compile "org.springframework:spring-core:4.3.0.RELEASE"
-//        compile "org.springframework:spring-context:4.3.0.RELEASE"
-//        compile "org.springframework:spring-webmvc:4.3.0.RELEASE"
     }
 }
 
@@ -58,6 +54,7 @@ project(":core") {
         compile "com.fasterxml.jackson.core:jackson-databind:2.5.4"
         compile "ch.qos.logback:logback-classic:1.1.6"
         compile "javax.inject:javax.inject:1"
+        compile "io.netty:netty-all:4.1.8.Final"
 
         testCompile "junit:junit:4.12"
     }
