@@ -5,8 +5,6 @@ import framework.context.support.BeanDefinition;
 import framework.context.support.Factory;
 import framework.utils.Assert;
 import framework.utils.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
@@ -18,16 +16,12 @@ import java.util.Map;
  * Created by jun.
  */
 public class DefaultBeanFactory implements Factory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBeanFactory.class);
 
     private final Map<BeanDefinition, Object> beanDefinitionObjectMap = Maps.concurrentHashMap(256);
 
     @Override
     public void registerBean(String beanName, Class<?> beanClass) {
-        BeanDefinition beanDefinition = new BeanDefinition.BeanDefinitionBuilder()
-                .setBeanName(beanName)
-                .setBeanClass(beanClass)
-                .build();
+        BeanDefinition beanDefinition = BeanDefinition.of(beanName, beanClass);
         registerBean(beanDefinition, construct(beanClass));
     }
 
@@ -35,17 +29,13 @@ public class DefaultBeanFactory implements Factory {
     public void registerBean(BeanDefinition beanDefinition, Object bean) {
         if (null != beanDefinitionObjectMap.putIfAbsent(beanDefinition, bean)) {
             String message = String.format("bean=%s already exists.", beanDefinition);
-            LOGGER.error(message);
             throw new BeanCreationException(message);
         }
     }
 
     @Override
     public <T> T getBean(String beanName, Class<T> beanClass) {
-        BeanDefinition beanDefinition = new BeanDefinition.BeanDefinitionBuilder()
-                .setBeanName(beanName)
-                .setBeanClass(beanClass)
-                .build();
+        BeanDefinition beanDefinition = BeanDefinition.of(beanName, beanClass);
         return getBean(beanDefinition);
     }
 
@@ -89,8 +79,7 @@ public class DefaultBeanFactory implements Factory {
                         Class<?> beanClass = field.getType();
                         String beanName = field.getName();
                         Object bean = getBean(beanName, field.getType());
-                        Assert.notNull(bean, String.format("bean=%s not registered.", new BeanDefinition.BeanDefinitionBuilder()
-                                .setBeanName(beanName).setBeanClass(beanClass).build()));
+                        Assert.notNull(bean, String.format("bean=%s not registered.", BeanDefinition.of(beanName, beanClass)));
                         if (!field.isAccessible()) {
                             field.setAccessible(true);
                         }

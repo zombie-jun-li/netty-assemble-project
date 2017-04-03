@@ -5,35 +5,18 @@ import java.util.Objects;
 /**
  * Created by jun.
  */
-@SuppressWarnings("PMD.AccessorClassGeneration")
-public class BeanDefinition {
+public final class BeanDefinition {
     private final String beanName;
 
     private final Class<?> beanClass;
 
-    private BeanDefinition(BeanDefinitionBuilder beanDefinitionBuilder) {
-        this.beanName = beanDefinitionBuilder.beanName;
-        this.beanClass = beanDefinitionBuilder.beanClass;
+    private BeanDefinition(String beanName, Class<?> beanClass) {
+        this.beanName = beanName;
+        this.beanClass = beanClass;
     }
 
-    public static class BeanDefinitionBuilder {
-        private String beanName;
-
-        private Class<?> beanClass;
-
-        public BeanDefinitionBuilder setBeanName(String beanName) {
-            this.beanName = beanName;
-            return this;
-        }
-
-        public BeanDefinitionBuilder setBeanClass(Class<?> beanClass) {
-            this.beanClass = beanClass;
-            return this;
-        }
-
-        public BeanDefinition build() {
-            return new BeanDefinition(this);
-        }
+    public static BeanDefinition of(String beanName, Class<?> beanClass) {
+        return new BeanDefinition(beanName, beanClass);
     }
 
     @Override
