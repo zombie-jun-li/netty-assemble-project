@@ -1,4 +1,4 @@
-package framework.http.support.annotation;
+package framework.web.bind.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Method
-public @interface Post {
+public @interface RequestMapping {
+    String path() default "";
+
+    RequestMethod method() default RequestMethod.GET;
 }

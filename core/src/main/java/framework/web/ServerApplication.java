@@ -1,4 +1,4 @@
-package framework;
+package framework.web;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -56,12 +56,12 @@ public class ServerApplication {
         return new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new OutboundServerHandler());
+                ch.pipeline().addLast(new ServerOutboundHandler());
                 ch.pipeline().addLast(new HttpResponseEncoder());
 
                 ch.pipeline().addLast(new HttpRequestDecoder());
                 ch.pipeline().addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
-                ch.pipeline().addLast(new InboundServerHandler());
+                ch.pipeline().addLast(new ServerInboundHandler());
                 if (null != channelHandlers) {
                     ch.pipeline().addLast(channelHandlers);
                 }
