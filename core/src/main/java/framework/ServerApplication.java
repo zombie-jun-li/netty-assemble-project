@@ -1,17 +1,12 @@
-package framework.web;
+package framework;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 
 /**
  * Created by jun.
@@ -53,20 +48,7 @@ public class ServerApplication {
     }
 
     private ChannelHandler configChannelInitializer() {
-        return new ChannelInitializer<SocketChannel>() {
-            @Override
-            public void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new ServerOutboundHandler());
-                ch.pipeline().addLast(new HttpResponseEncoder());
-
-                ch.pipeline().addLast(new HttpRequestDecoder());
-                ch.pipeline().addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
-                ch.pipeline().addLast(new ServerInboundHandler());
-                if (null != channelHandlers) {
-                    ch.pipeline().addLast(channelHandlers);
-                }
-            }
-        };
+        return new ServerChannelInitializer(channelHandlers);
     }
 
     public void run() {

@@ -1,6 +1,8 @@
-package framework.web;
+package framework;
 
 import framework.web.route.Dispatcher;
+import framework.web.route.http.request.RequestImpl;
+import framework.web.route.http.response.ResponseImpl;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,7 +20,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * Created by jun.
  */
 @ChannelHandler.Sharable
-public class ServerInboundHandler extends SimpleChannelInboundHandler {
+public class ServerInboundHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private static final AsciiString CONTENT_LENGTH = new AsciiString("Content-Length");
     private static final AsciiString CONNECTION = new AsciiString("Connection");
@@ -27,18 +29,15 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler {
     private Dispatcher dispatcher;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof FullHttpRequest) {
-            FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
-            FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK);
-            dispatcher.dispatch(fullHttpRequest, fullHttpResponse);
-            fullHttpResponse.headers().setInt(CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
-            if (!HttpUtil.isKeepAlive(fullHttpRequest)) {
-                ctx.write(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
-            } else {
-                fullHttpResponse.headers().set(CONNECTION, KEEP_ALIVE);
-                ctx.write(fullHttpResponse);
-            }
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest fullHttpRequest) throws Exception {
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK);
+        dispatcher.dispatch(new RequestImpl(fullHttpRequest), new ResponseImpl(fullHttpResponse));
+        fullHttpResponse.headers().setInt(CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
+        if (!HttpUtil.isKeepAlive(fullHttpRequest)) {
+            ctx.write(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
+        } else {
+            fullHttpResponse.headers().set(CONNECTION, KEEP_ALIVE);
+            ctx.write(fullHttpResponse);
         }
     }
 

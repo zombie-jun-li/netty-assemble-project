@@ -3,10 +3,8 @@ package framework.web.route;
 import framework.utils.Maps;
 import framework.web.bind.RequestMapping;
 import framework.web.bind.RequestHandler;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
+import framework.web.route.http.request.Request;
+import framework.web.route.http.response.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,19 +18,19 @@ public class Dispatcher {
 
     private final Map<RequestMapping, RequestHandler> handlerMapping = Maps.hashMap(256);
 
-    public void dispatch(FullHttpRequest fullHttpRequest, FullHttpResponse fullHttpResponse) {
+    public void dispatch(Request request, Response response) {
         boolean result = interceptors.stream()
-                .anyMatch(interceptor -> !interceptor.intercept());
+                .anyMatch(interceptor -> !interceptor.intercept(null, null));
         if (result) {
             return;
         }
-        doDispatch(fullHttpRequest, fullHttpResponse);
+        doDispatch(request, response);
     }
 
-    private void doDispatch(FullHttpRequest fullHttpRequest, FullHttpResponse fullHttpResponse) {
-        HttpMethod httpMethod = fullHttpRequest.method();
-        String path = fullHttpRequest.uri();
-        RequestMapping requestMapping = RequestMapping.build(path, httpMethod.name());
+    private void doDispatch(Request request, Response response) {
+        String path = request.path();
+        String method = request.method().name();
+        RequestMapping requestMapping = RequestMapping.build(path, method);
 
         RequestHandler requestHandler = handlerMapping.get(requestMapping);
         if (null == requestHandler) {
@@ -40,7 +38,7 @@ public class Dispatcher {
             return;
         }
         // todo set response content and status code
-        fullHttpResponse.setStatus(HttpResponseStatus.OK);
+//        fullHttpResponse.setStatus(HttpResponseStatus.OK);
         requestHandler.handle();
     }
 }

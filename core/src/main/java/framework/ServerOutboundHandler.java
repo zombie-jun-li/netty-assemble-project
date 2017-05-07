@@ -1,4 +1,4 @@
-package framework.web;
+package framework;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
