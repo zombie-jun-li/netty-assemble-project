@@ -12,6 +12,8 @@ public interface Request {
 
     String host();
 
+    String scheme();
+
     Optional<String> head(String name);
 
     RequestMethod method();

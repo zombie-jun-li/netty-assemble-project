@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
  * Created by jun.
  */
 public final class ResponseImpl implements Response {
-    private FullHttpResponse fullHttpResponse;
+    private final FullHttpResponse fullHttpResponse;
 
     public ResponseImpl(FullHttpResponse fullHttpResponse) {
         this.fullHttpResponse = fullHttpResponse;

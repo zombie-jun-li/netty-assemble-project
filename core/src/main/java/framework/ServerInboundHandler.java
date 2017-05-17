@@ -1,10 +1,10 @@
 package framework;
 
 import framework.web.route.Dispatcher;
+import framework.web.route.http.request.Request;
 import framework.web.route.http.request.RequestImpl;
 import framework.web.route.http.response.ResponseImpl;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -19,7 +19,6 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 /**
  * Created by jun.
  */
-@ChannelHandler.Sharable
 public class ServerInboundHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private static final AsciiString CONTENT_LENGTH = new AsciiString("Content-Length");
@@ -31,7 +30,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<FullHttpRe
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest fullHttpRequest) throws Exception {
         FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK);
-        dispatcher.dispatch(new RequestImpl(fullHttpRequest), new ResponseImpl(fullHttpResponse));
+        dispatcher.dispatch(request(fullHttpRequest, ctx), new ResponseImpl(fullHttpResponse));
         fullHttpResponse.headers().setInt(CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
         if (!HttpUtil.isKeepAlive(fullHttpRequest)) {
             ctx.write(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
@@ -41,8 +40,7 @@ public class ServerInboundHandler extends SimpleChannelInboundHandler<FullHttpRe
         }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.close();
+    private Request request(FullHttpRequest fullHttpRequest, ChannelHandlerContext ctx) {
+        return new RequestImpl(fullHttpRequest, ctx.channel());
     }
 }

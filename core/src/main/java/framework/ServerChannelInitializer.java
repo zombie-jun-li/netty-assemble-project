@@ -24,13 +24,8 @@ public class ServerChannelInitializer extends ChannelInitializer {
     @Override
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
-//        pipeline.addLast(new ServerOutboundHandler());
-//        pipeline.addLast(new HttpResponseEncoder());
 
         pipeline.addLast(new HTTPRequestDecoder(sslContext()));
-//        pipeline.addLast(new HttpRequestDecoder());
-//        pipeline.addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
-//        pipeline.addLast(new ServerInboundHandler());
         if (null != channelHandlers) {
             pipeline.addLast(channelHandlers);
         }

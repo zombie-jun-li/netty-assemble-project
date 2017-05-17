@@ -1,5 +1,6 @@
 package framework;
 
+import framework.web.route.http.HttpScheme;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -31,6 +32,7 @@ public class HTTPRequestDecoder extends ByteToMessageDecoder {
 
         if (isSsl(in)) {
             enableSsl(ctx);
+            ctx.channel().attr(AttributeKeyConstant.SCHEME).set(HttpScheme.HTTPS.scheme());
         }
         enableHttp(ctx);
     }
