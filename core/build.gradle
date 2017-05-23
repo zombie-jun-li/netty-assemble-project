@@ -1,0 +1,15 @@
+
+ext {
+    jacksonVersion = "2.5.4"
+}
+
+dependencies {
+    compile "redis.clients:jedis:2.9.0"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "com.fasterxml.jackson.module:jackson-module-jaxb-annotations:${jacksonVersion}"
+    compile "ch.qos.logback:logback-classic:1.1.6"
+    compile "javax.inject:javax.inject:1"
+    compile "io.netty:netty-all:4.1.8.Final"
+
+    testCompile "junit:junit:4.12"
+}

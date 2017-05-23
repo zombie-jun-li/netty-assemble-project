@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 
 /**
  * Created by jun.
@@ -16,6 +18,7 @@ public abstract class Json {
         OBJECTMAPPER.configure(SerializationFeature.INDENT_OUTPUT, false);
         OBJECTMAPPER.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         OBJECTMAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        OBJECTMAPPER.setAnnotationIntrospector(new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()));
     }
 
     public static String toJson(Object object) {

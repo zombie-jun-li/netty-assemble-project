@@ -48,15 +48,4 @@ project(":netty-assemble") {
     }
 }
 
-project(":core") {
-    dependencies {
-        compile "redis.clients:jedis:2.9.0"
-        compile "com.fasterxml.jackson.core:jackson-databind:2.5.4"
-        compile "ch.qos.logback:logback-classic:1.1.6"
-        compile "javax.inject:javax.inject:1"
-        compile "io.netty:netty-all:4.1.8.Final"
-
-        testCompile "junit:junit:4.12"
-    }
-}
 
